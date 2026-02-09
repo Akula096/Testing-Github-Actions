@@ -1,0 +1,31 @@
+name: Testing Github Actions
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]  
+  push:
+    tags:
+      - '[0-9]+\.[0-9]+\.[0-9]+'
+jobs:
+  Pull_Request:
+      if: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: checkout code
+          uses: actions/checkout@v4
+        - name: PR Job
+          run: |
+            echo  "PR job is running"
+            echo "Event: ${{ github.event_name }}"
+            echo "PR action ${{ github.event.action}}"
+  Build-deploy:
+      if: ${{ github.event_name != 'pull_request' }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: checkout code
+          uses: actions/checkout@v4
+
+        - name: Build & Deploy Job
+          run: |
+            echo "Build job is running"
+            echo "Triggered by TAG push"
+            echo "Respository : ${{github.event.repository.name}}"
